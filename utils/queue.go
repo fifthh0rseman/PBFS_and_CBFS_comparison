@@ -15,6 +15,13 @@ type IntQueue struct {
 	tail *Node
 }
 
+func NewQueue() *IntQueue {
+	return &IntQueue{
+		head: nil,
+		tail: nil,
+	}
+}
+
 func (q *IntQueue) Pop() int {
 	if q.head == nil {
 		return -1
