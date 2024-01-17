@@ -2,6 +2,7 @@ package main
 
 import (
 	"BFS/consecutive"
+	"BFS/parallel"
 	"BFS/utils"
 	"fmt"
 	"runtime"
@@ -31,7 +32,7 @@ func main() {
 	} else if i == 2 {
 		fmt.Println("Parallel BFS is chosen.")
 		startTimeCons := time.Now()
-		//todo
+		parallel.ParallelBfs(dim, start, finish)
 		_ = utils.SaveAndPrintElapsedTime(startTimeCons, "Parallel BFS")
 	} else {
 		fmt.Println("Wrong input. Try again.")
