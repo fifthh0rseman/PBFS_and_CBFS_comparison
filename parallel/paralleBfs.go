@@ -2,7 +2,6 @@ package parallel
 
 import (
 	"BFS/utils"
-	"fmt"
 	"sync"
 	"sync/atomic"
 )
@@ -16,32 +15,25 @@ func ParallelBfs(dim, start, finish int) {
 	pNext := atomic.Int32{}
 	pNext.Store(1)
 	pPrev := int32(0)
+	var block int32 = 100
 	for !pNext.CompareAndSwap(pPrev, pPrev) {
-		var wg sync.WaitGroup
 		pNextCopy := pNext.Load()
-		for i := pPrev; i < pNextCopy; i++ {
+		var wg sync.WaitGroup
+		for i := pPrev; i < pNextCopy; i += block {
 			wg.Add(1)
-			i := i
 			go func(wg *sync.WaitGroup, i int32) {
-				cur := frontier[i]
-				fmt.Println("Cur node:", cur)
-				for next := range utils.GetNeighbours(cur, dim) {
-					if visited[next].CompareAndSwap(false, true) {
-						if cur == finish {
-							fmt.Println("Finish node reached")
-							return
+				for j := i; j < pNextCopy && j < i+block; j++ {
+					cur := frontier[j]
+					for _, next := range utils.GetNeighbours(cur, dim) {
+						if visited[next].CompareAndSwap(false, true) {
+							frontier[pNext.Add(1)-1] = next
 						}
-
-						frontier[pNext.Add(1)] = next
-						fmt.Println("func finish", i, "node: ", next)
 					}
 				}
 				wg.Done()
 			}(&wg, i)
 		}
 		wg.Wait()
-		fmt.Println("pprev: ", pPrev)
-		fmt.Println("pnext: ", pNext.Load())
 		pPrev = pNextCopy
 	}
 }
