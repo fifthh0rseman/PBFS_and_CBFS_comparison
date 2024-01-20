@@ -11,10 +11,6 @@ func BFSCube(dim, start, finish int) {
 	q.Push(start)
 	for !q.Empty() {
 		node := q.Pop()
-		if node == finish {
-			fmt.Println("Finish node reached")
-			return
-		}
 		visited[node] = true
 		children := utils.GetNeighbours(node, dim)
 		for _, c := range children {
